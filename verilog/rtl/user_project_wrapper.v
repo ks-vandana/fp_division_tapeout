@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 // SPDX-License-Identifier: Apache-2.0
-
 `default_nettype none
 /*
  *-------------------------------------------------------------
@@ -82,17 +81,16 @@ module user_project_wrapper #(
 /* User project is instantiated  here   */
 /*--------------------------------------*/
 
-user_proj_example mprj (
+fp_division fd(
 `ifdef USE_POWER_PINS
 	.vccd1(vccd1),	// User area 1 1.8V power
 	.vssd1(vssd1),	// User area 1 digital ground
 `endif
 
-    .wb_clk_i(wb_clk_i),
-    .wb_rst_i(wb_rst_i),
+    .clk(wb_clk_i),
 
     // MGMT SoC Wishbone Slave
-
+/*
     .wbs_cyc_i(wbs_cyc_i),
     .wbs_stb_i(wbs_stb_i),
     .wbs_we_i(wbs_we_i),
@@ -107,17 +105,104 @@ user_proj_example mprj (
     .la_data_in(la_data_in),
     .la_data_out(la_data_out),
     .la_oenb (la_oenb),
-
+*/
     // IO Pads
 
-    .io_in ({io_in[37:30],io_in[7:0]}),
-    .io_out({io_out[37:30],io_out[7:0]}),
-    .io_oeb({io_oeb[37:30],io_oeb[7:0]}),
+    .a1 (io_in),
+    .b1 (io_in),
+    .c(io_out)
 
     // IRQ
-    .irq(user_irq)
+    //.irq(user_irq)
 );
 
 endmodule	// user_project_wrapper
 
+module fp_division(
+	`ifdef USE_POWER_PINS
+	inout vccd1,
+	inout vssd1,
+	`endif
+	input wire clk,
+	input wire [31:0] a1,
+	input wire [31:0] b1,
+	output reg [31:0] c
+);
+	
+	reg [31:0] a;
+	reg [31:0] b;
+	reg sa;
+	reg sb;
+	reg sc;
+	reg [7:0] ea;
+	reg [7:0] eb;
+	reg [7:0] ec;
+	reg [23:0] ma;
+	reg [23:0] mb;
+	reg [23:0] mc;
+	reg [49:0] rq;
+	always @(posedge clk) begin
+		a <= a1;
+		b <= b1;
+		c[31] <= sc;
+		c[30:23] <= ec;
+		c[22:0] <= mc[22:0];
+	end
+	always @(*) begin : sv2v_autoblock_1
+		reg [0:1] _sv2v_jump;
+		_sv2v_jump = 2'b00;
+		sa = a[31];
+		sb = b[31];
+		sc = sa ^ sb;
+		ea = a[30:23];
+		eb = b[30:23];
+		ec = (ea - eb) + 8'b01111111;
+		ma = 24'b000000000000000000000000 + a[22:0];
+		mb = 24'b000000000000000000000000 + b[22:0];
+		mc = 24'b000000000000000000000000;
+		rq = 50'b00000000000000000000000000000000000000000000000000;
+		ma[23] = 1;
+		mb[23] = 1;
+		rq[46:23] = ma[23:0];
+		begin : sv2v_autoblock_2
+			reg signed [31:0] t;
+			for (t = 0; t < 24; t = t + 1)
+				begin
+					rq = rq << 1;
+					rq[49] = 0;
+					rq[49:24] = rq[49:24] - mb[23:0];
+					if (rq[49] == 1)
+						rq[49:24] = rq[49:24] + mb[23:0];
+					else
+						rq[0] = 1;
+				end
+		end
+		mc = rq[23:0];
+		begin : sv2v_autoblock_3
+			reg signed [31:0] l;
+			begin : sv2v_autoblock_4
+				reg signed [31:0] _sv2v_value_on_break;
+				for (l = 0; l < 25; l = l + 1)
+					if (_sv2v_jump < 2'b10) begin
+						_sv2v_jump = 2'b00;
+						if (~mc[23]) begin
+							if (mc != 0) begin
+								mc = mc << 1;
+								ec = ec - 1;
+								if (mc[23])
+									_sv2v_jump = 2'b10;
+							end
+							else
+								mc = mc;
+						end
+						_sv2v_value_on_break = l;
+					end
+				if (!(_sv2v_jump < 2'b10))
+					l = _sv2v_value_on_break;
+				if (_sv2v_jump != 2'b11)
+					_sv2v_jump = 2'b00;
+			end
+		end
+	end
+endmodule
 `default_nettype wire
