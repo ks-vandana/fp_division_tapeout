@@ -460,3 +460,17 @@ io_oeb\[37\]
 ## GDS Generation
 ![image](https://github.com/ks-vandana/fp_division_tapeout/assets/116361300/36818bd6-1bc3-4be1-93d7-9c8127e690bf)
 
+## Layout images
+
+![Screenshot from 2023-11-26 13-12-09](https://github.com/ks-vandana/fp_division_tapeout/assets/116361300/6fae3ba3-3a8e-4050-9590-5ee7f2238335)
+
+![Screenshot from 2023-11-26 13-06-16](https://github.com/ks-vandana/fp_division_tapeout/assets/116361300/acbf8eac-377c-44ee-ad73-54d6e21d3613)
+
+![Screenshot from 2023-11-26 13-05-14](https://github.com/ks-vandana/fp_division_tapeout/assets/116361300/e82a1d89-a136-4105-8361-74c9f5be1152)
+
+![Screenshot from 2023-11-26 13-05-38](https://github.com/ks-vandana/fp_division_tapeout/assets/116361300/5c054ec9-3809-4de8-841f-00e85020087a)
+
+![Screenshot from 2023-11-26 13-05-46](https://github.com/ks-vandana/fp_division_tapeout/assets/116361300/688a6dbe-e839-4830-94ab-722852d10a0b)
+
+![Screenshot from 2023-11-26 13-06-42](https://github.com/ks-vandana/fp_division_tapeout/assets/116361300/f419e629-8a68-47f8-8825-f0e0d461e527)
+
